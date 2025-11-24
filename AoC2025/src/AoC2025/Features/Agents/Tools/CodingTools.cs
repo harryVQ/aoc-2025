@@ -154,8 +154,7 @@ Compile and run the existing `Program.cs` in the working directory INSIDE Docker
         dockerInfo.ArgumentList.Add("-c");
         dockerInfo.ArgumentList.Add(innerCommand);
 
-        using var proc = Process.Start(dockerInfo)
-                        ?? throw new InvalidOperationException("Failed to start docker process");
+        using var proc = Process.Start(dockerInfo) ?? throw new InvalidOperationException("failed to start docker process");
 
         if (!string.IsNullOrEmpty(stdin))
         {
