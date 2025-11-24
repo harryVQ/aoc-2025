@@ -4,7 +4,20 @@
         <OutputType>Exe</OutputType>
         <TargetFramework>net8.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>enable</Nullable>
+        <Nullable>disable</Nullable>
     </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.Agents.AI" Version="1.0.0-preview.251107.1" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+        <PackageReference Include="OllamaSharp" Version="5.4.8" />
+        <PackageReference Include="JetBrains.Annotations" Version="2025.2.2" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Problems\" />
+      <Folder Include="Solutions\" />
+    </ItemGroup>
 
 </Project>
