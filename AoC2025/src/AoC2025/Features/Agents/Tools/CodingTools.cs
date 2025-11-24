@@ -60,10 +60,7 @@ public sealed class CodingTools
             compilerErrors,
             cancellationToken);
     }
-
-    // ------------------------------------------------------------------------
-    // 2. Result type
-    // ------------------------------------------------------------------------
+    
     public sealed record RunResult(
         bool Success,
         string Stdout,
