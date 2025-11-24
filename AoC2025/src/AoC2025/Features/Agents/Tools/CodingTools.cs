@@ -21,10 +21,7 @@ public sealed class CodingTools
         this.dockerImage = dockerImage;
         Directory.CreateDirectory(this.workDir);
     }
-
-    // ------------------------------------------------------------------------
-    // 1. Code generation (unchanged in spirit)
-    // ------------------------------------------------------------------------
+    
     [Description("""
                  Generate or repair a complete C# console application (`Program.cs`)
                  for an Advent of Code puzzle.
