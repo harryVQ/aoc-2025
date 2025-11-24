@@ -165,7 +165,7 @@ public class PuzzleSolverAgent(AppSettings settings)
                     - sampleInput: SAMPLE INPUT exactly as it will be fed to stdin (may be empty).
                     - expectedSampleOutput: expected SAMPLE output as a string (may be empty).
                     - previousCode: last C# program used (empty on first attempt).
-                    - compilerErrors: compiler/runtime errors or wrong-answer info from the last run (empty on first attempt).
+                    - compilerErrors: compiler/runtime errors or wrong-answer info from the last run (empty on first attempt). This should include the full stderr and exit code, plus the wrong output if applicable.
                   - Returns: ONLY the full C# source for Program.cs (no markdown).
 
                2. compile_and_run
