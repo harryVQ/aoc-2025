@@ -74,17 +74,8 @@ public sealed class CodingTools
         int ExitCode,
         double? InnerRuntimeSeconds);
 
-    // ------------------------------------------------------------------------
-    // 3. Tool-facing compile_and_run: CODE + STDIN
-    // ------------------------------------------------------------------------
     [Description("""
 Compile and run C# `Program.cs` INSIDE a locked-down Docker container using .NET SDK.
-
-This tool:
-- Writes the provided C# source into Program.cs
-- Compiles (builds) the project
-- Runs it with the provided stdin
-- Measures the inner runtime using /usr/bin/time
 
 Use this ONLY with SAMPLE INPUT.
 """)]
@@ -100,15 +91,10 @@ Use this ONLY with SAMPLE INPUT.
 
         return await this.RunInDockerAsync(stdin, cancellationToken);
     }
-
-    // ------------------------------------------------------------------------
-    // 4. Host-facing compile_and_run: STDIN only (assumes Program.cs already written)
-    // ------------------------------------------------------------------------
+    
     [Description("""
 Compile and run the existing `Program.cs` in the working directory INSIDE Docker.
 
-Intended for the host to run the REAL puzzle input after the agent has already
-written a working Program.cs during SAMPLE testing.
 """)]
     public async Task<RunResult> CompileAndRunAsync(
         [Description("Standard input to feed to the program (typically REAL puzzle input).")]
@@ -129,10 +115,7 @@ written a working Program.cs during SAMPLE testing.
 
         return await this.RunInDockerAsync(stdin, cancellationToken);
     }
-
-    // ------------------------------------------------------------------------
-    // 5. Shared Docker runner
-    // ------------------------------------------------------------------------
+    
     private async Task<RunResult> RunInDockerAsync(
         string stdin,
         CancellationToken cancellationToken)
