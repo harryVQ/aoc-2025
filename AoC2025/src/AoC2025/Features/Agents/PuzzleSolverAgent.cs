@@ -161,11 +161,20 @@ public class PuzzleSolverAgent(AppSettings settings)
                1. generate_code
                   - Purpose: create or repair a complete C# solution for this puzzle.
                   - Always pass:
-                    - puzzleDescription: clear, concise description of the puzzle, input, and required output.
+                    - puzzleDescription: clear description of the puzzle, input, and required output.
                     - sampleInput: SAMPLE INPUT exactly as it will be fed to stdin (may be empty).
                     - expectedSampleOutput: expected SAMPLE output as a string (may be empty).
-                    - previousCode: last C# program used (empty on first attempt).
-                    - compilerErrors: compiler/runtime errors or wrong-answer info from the last run (empty on first attempt). This should include the full stderr and exit code, plus the wrong output if applicable.
+                    - previousCode: last C# program used (empty on the first attempt).
+                    - compilerErrors: MUST describe what went wrong on the last run.
+                      • First attempt: empty string is OK.
+                      • Any later attempt (previousCode != ""):
+                          >>> compilerErrors MUST NOT be empty. <<<
+                          It MUST include:
+                            - exitCode
+                            - stderr
+                            - full stdout
+                            - the last non-empty stdout line (the program’s answer)
+                            - the expectedSampleOutput
                   - Returns: ONLY the full C# source for Program.cs (no markdown).
 
                2. compile_and_run
@@ -181,32 +190,46 @@ public class PuzzleSolverAgent(AppSettings settings)
 
                1. FIRST ATTEMPT
                   - Call generate_code with:
-                    - previousCode = "" (empty)
+                    - previousCode   = "" (empty)
                     - compilerErrors = "" (empty)
                   - Then call compile_and_run with:
                     - code  = the C# source returned by generate_code
                     - stdin = SAMPLE INPUT (if any)
 
                2. CHECK SAMPLE OUTPUT
-                  - If compile_and_run.success is false, or stderr shows a runtime error:
-                    - Treat this as a failed attempt.
-                  - Otherwise:
-                    - From stdout, take the LAST non-empty line as the program’s answer.
-                    - Compare that string to expectedSampleOutput (if provided).
-                    - If they differ, treat this as a failed attempt.
+                  - Treat any of these as FAILURE:
+                    - compile_and_run.success == false
+                    - exitCode != 0
+                    - a runtime exception in stderr
+                    - The SAMPLE answer is wrong:
+                      * Take the LAST non-empty line of stdout as the program’s answer.
+                      * If that answer != expectedSampleOutput (string compare), this is a failure.
 
                3. REPAIR (IF NEEDED)
-                  - On failure (compile error, runtime error, or wrong SAMPLE answer):
-                    - Call generate_code again with:
-                      - previousCode   = the last C# source you used.
-                      - compilerErrors = a short summary including:
-                          - exitCode
-                          - stderr
-                          - the wrong output (last non-empty stdout line), if any.
-                    - Then call compile_and_run again with the new code and the same SAMPLE INPUT.
+                  - On FAILURE, you MUST call generate_code again.
+                  - You MUST pass:
+                    - previousCode = the last C# source you used (exactly as returned before).
+                    - compilerErrors = a NON-EMPTY diagnostic summary. For example:
+
+                      ExitCode: {exitCode}
+                      STDERR:
+                      {stderr}
+                      STDOUT:
+                      {stdout}
+                      LAST_ANSWER: {lastNonEmptyStdoutLine}
+                      EXPECTED_SAMPLE_OUTPUT: {expectedSampleOutput}
+
+                  - Then call compile_and_run again with the new code and the same SAMPLE INPUT.
                   - Do this repair loop up to 2–3 times.
                   - If it still fails, stop and prepare a JSON response that clearly describes the failure
                     and includes the latest code.
+
+               IMPORTANT BEHAVIOUR
+               --------------------
+               - NEVER call generate_code again with previousCode set and compilerErrors still empty.
+               - NEVER treat a wrong SAMPLE answer as success.
+               - You may refine puzzleDescription for clarity, but you MUST NOT change the expectedSampleOutput
+                 or “move the goalposts” to match a wrong program output.
 
                ABOUT THE CODE ITSELF
                ----------------------
@@ -214,7 +237,7 @@ public class PuzzleSolverAgent(AppSettings settings)
                - Let generate_code decide the exact structure of Program.cs.
                - You only need to:
                  - Describe the puzzle clearly in puzzleDescription.
-                 - Feed back compilerErrors and previousCode accurately during repairs.
+                 - Feed back previousCode and compilerErrors accurately during repairs.
                  - Judge correctness using the SAMPLE input/output.
 
                FINAL RESPONSE FORMAT
