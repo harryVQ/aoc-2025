@@ -1,6 +1,6 @@
-# Advent of Code - Day 1
+# Advent of Code - Day 2
 
-## Day 1: Secret Entrance
+## Day 2: Gift Shop
 
 ### Solutions
 - [Part 1 C#](part1.cs) - [Explanation](part1_explanation.md)
